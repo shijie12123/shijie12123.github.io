@@ -263,11 +263,163 @@
     /* ===== 主布局 ===== */
     .grid {
       display: grid;
-      grid-template-columns: 1fr 300px;
+      grid-template-columns: 300px 1fr;
       gap: 3rem;
     }
 
-    /* ===== 左侧：视频区 ===== */
+    /* ===== 左侧：个人品牌（原右侧） ===== */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .bio-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 1.8rem 1.8rem;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(10px);
+      transition: all 0.4s ease;
+    }
+    .bio-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 0 30px var(--shadow-color);
+    }
+
+    .brand-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1.5px solid var(--border-hover);
+      margin-bottom: 0.8rem;
+      box-shadow: 0 0 30px var(--shadow-color);
+      flex-shrink: 0;
+      background: var(--bg-secondary);
+      transition: all 0.4s ease;
+    }
+    .brand-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .bio-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 0.2rem;
+      background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: background 0.4s ease;
+    }
+
+    .bio-title {
+      font-size: 0.7rem;
+      color: var(--accent-dim);
+      letter-spacing: 0.6px;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-weight: 400;
+      transition: all 0.4s ease;
+    }
+
+    .bio-text {
+      font-size: 0.85rem;
+      color: var(--bio-text);
+      line-height: 1.8;
+      margin-bottom: 0.2rem;
+      transition: color 0.4s ease;
+    }
+    .bio-text .highlight {
+      color: var(--bio-highlight);
+      font-weight: 400;
+      transition: color 0.4s ease;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.6rem;
+      margin: 1rem 0 0.6rem;
+    }
+    .skill-tags span {
+      background: var(--tag-bg);
+      padding: 0.25rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.65rem;
+      color: var(--tag-color);
+      border: 1px solid var(--skill-border);
+      letter-spacing: 0.2px;
+      font-weight: 400;
+      transition: all 0.3s ease;
+    }
+    .skill-tags span:hover {
+      background: var(--skill-hover-bg);
+      border-color: var(--skill-hover-border);
+      color: var(--accent-dim);
+    }
+
+    .bio-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.6rem;
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border-color);
+      transition: border-color 0.4s ease;
+    }
+    .bio-tags span {
+      background: var(--bg-card);
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      letter-spacing: 0.3px;
+      font-weight: 400;
+      transition: all 0.4s ease;
+    }
+
+    .edu-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 1.6rem 1.8rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.4s ease;
+    }
+    .edu-card:hover { border-color: var(--border-hover); }
+    .edu-card h4 {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent-dim);
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+      transition: color 0.4s ease;
+    }
+    .edu-item .school {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--edu-text);
+      transition: color 0.4s ease;
+    }
+    .edu-item .major {
+      font-size: 0.8rem;
+      color: var(--edu-major);
+      transition: color 0.4s ease;
+    }
+    .edu-item .year {
+      font-size: 0.7rem;
+      color: var(--edu-year);
+      margin-top: 0.1rem;
+      transition: color 0.4s ease;
+    }
+
+    /* ===== 右侧：视频推荐区（原左侧） ===== */
     .video-feature {
       background: var(--bg-card);
       border-radius: 24px;
@@ -502,159 +654,12 @@
     .related-list span:hover { color: var(--related-hover); }
     .related-list .sep { color: var(--border-color); transition: color 0.4s ease; }
 
-    /* ===== 右侧：个人品牌 ===== */
-    .sidebar { display: flex; flex-direction: column; gap: 2rem; }
-
-    .bio-card {
-      background: var(--bg-card);
-      border-radius: 20px;
-      padding: 1.8rem 1.8rem;
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(10px);
-      transition: all 0.4s ease;
-    }
-    .bio-card:hover {
-      border-color: var(--border-hover);
-      box-shadow: 0 0 30px var(--shadow-color);
-    }
-
-    .brand-avatar {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 1.5px solid var(--border-hover);
-      margin-bottom: 0.8rem;
-      box-shadow: 0 0 30px var(--shadow-color);
-      flex-shrink: 0;
-      background: var(--bg-secondary);
-      transition: all 0.4s ease;
-    }
-    .brand-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .bio-name {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: 0.2rem;
-      background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 80%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      transition: background 0.4s ease;
-    }
-
-    .bio-title {
-      font-size: 0.7rem;
-      color: var(--accent-dim);
-      letter-spacing: 0.6px;
-      margin-bottom: 1.2rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid var(--border-color);
-      text-transform: uppercase;
-      font-weight: 400;
-      transition: all 0.4s ease;
-    }
-
-    .bio-text {
-      font-size: 0.85rem;
-      color: var(--bio-text);
-      line-height: 1.8;
-      margin-bottom: 0.2rem;
-      transition: color 0.4s ease;
-    }
-    .bio-text .highlight {
-      color: var(--bio-highlight);
-      font-weight: 400;
-      transition: color 0.4s ease;
-    }
-
-    .skill-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem 0.6rem;
-      margin: 1rem 0 0.6rem;
-    }
-    .skill-tags span {
-      background: var(--tag-bg);
-      padding: 0.25rem 0.9rem;
-      border-radius: 30px;
-      font-size: 0.65rem;
-      color: var(--tag-color);
-      border: 1px solid var(--skill-border);
-      letter-spacing: 0.2px;
-      font-weight: 400;
-      transition: all 0.3s ease;
-    }
-    .skill-tags span:hover {
-      background: var(--skill-hover-bg);
-      border-color: var(--skill-hover-border);
-      color: var(--accent-dim);
-    }
-
-    .bio-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 0.6rem;
-      margin-top: 0.8rem;
-      padding-top: 0.8rem;
-      border-top: 1px solid var(--border-color);
-      transition: border-color 0.4s ease;
-    }
-    .bio-tags span {
-      background: var(--bg-card);
-      padding: 0.2rem 0.8rem;
-      border-radius: 30px;
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      border: 1px solid var(--border-color);
-      letter-spacing: 0.3px;
-      font-weight: 400;
-      transition: all 0.4s ease;
-    }
-
-    .edu-card {
-      background: var(--bg-card);
-      border-radius: 20px;
-      padding: 1.6rem 1.8rem;
-      border: 1px solid var(--border-color);
-      transition: all 0.4s ease;
-    }
-    .edu-card:hover { border-color: var(--border-hover); }
-    .edu-card h4 {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--accent-dim);
-      margin-bottom: 0.8rem;
-      font-weight: 500;
-      transition: color 0.4s ease;
-    }
-    .edu-item .school {
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--edu-text);
-      transition: color 0.4s ease;
-    }
-    .edu-item .major {
-      font-size: 0.8rem;
-      color: var(--edu-major);
-      transition: color 0.4s ease;
-    }
-    .edu-item .year {
-      font-size: 0.7rem;
-      color: var(--edu-year);
-      margin-top: 0.1rem;
-      transition: color 0.4s ease;
-    }
-
     /* ===== 响应式 ===== */
     @media (max-width: 900px) {
       .grid { grid-template-columns: 1fr; gap: 2.4rem; }
       .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
     }
+
     @media (max-width: 600px) {
       body { padding: 1.2rem 1rem; }
       .header { flex-direction: column; align-items: flex-start; gap: 0.8rem; margin-bottom: 2rem; }
@@ -669,6 +674,7 @@
       .brand-avatar { width: 56px; height: 56px; }
       .theme-toggle .toggle-label { display: none; }
     }
+
     @media (max-width: 400px) {
       .video-title { font-size: 1rem; }
       .bio-name { font-size: 1.2rem; }
@@ -703,7 +709,62 @@
     </header>
 
     <div class="grid">
-      <!-- ===== 左侧：视频推荐 ===== -->
+      <!-- ===== 左侧（新）：个人品牌 ===== -->
+      <aside class="sidebar">
+        <div class="bio-card">
+          <div class="brand-avatar">
+            <img 
+              src="https://i1.hdslb.com/bfs/face/47aa8b68854951ce0930f2ea5097a8bca6dae949.jpg@240w_240h_1c_1s_!web-avatar-nav.webp" 
+              alt="QIYINZOU 头像"
+              referrerpolicy="no-referrer"
+              loading="lazy"
+              onerror="this.style.display='none'"
+            >
+          </div>
+          <div class="bio-name">QIYINZOU</div>
+          <div class="bio-title">视频创作者 · 剪辑师</div>
+
+          <div class="bio-text">
+            擅长 <span class="highlight">快影</span>、<span class="highlight">剪映</span>、<span class="highlight">AM</span>，<br>
+            将灵感转化为有质感的影像。<br><br>
+            记录剪辑心得与创作过程，<br>
+            探索视觉表达的边界。<br><br>
+            <span style="color:var(--text-muted); font-size:0.75rem;">// 持续创作，持续精进</span>
+          </div>
+
+          <div class="skill-tags">
+            <span>✦ 快影</span>
+            <span>✦ 剪映</span>
+            <span>✦ AM</span>
+            <span style="opacity:0.3;">+ 剪辑</span>
+          </div>
+
+          <div class="bio-tags">
+            <span>#视频创作</span>
+            <span>#剪辑</span>
+            <span>#影像</span>
+            <span>#创意</span>
+          </div>
+        </div>
+
+        <div class="edu-card">
+          <h4>▸ Education</h4>
+          <div class="edu-item">
+            <div class="school">集美大学</div>
+            <div class="major">软件工程学士 · 计算机工程学院</div>
+            <div class="year">2022 – 2026</div>
+          </div>
+          <div style="margin-top: 0.8rem; font-size: 0.65rem; color: var(--accent-dim); letter-spacing: 0.4px; transition: color 0.4s ease;">
+            · 持续学习 ·
+          </div>
+        </div>
+
+        <div style="font-size: 0.55rem; color: var(--text-muted); text-align: right; letter-spacing: 0.6px; margin-top: -0.6rem; transition: color 0.4s ease;">
+          v2.0 · 科技视界
+        </div>
+      </aside>
+
+      <!-- ===== 右侧（新）：视频推荐 ===== -->
       <main>
         <div class="video-feature">
           <div class="feature-label">
@@ -719,7 +780,6 @@
                   <span class="big-icon">🎬</span>
                   <span>25时 · 荒野求生</span>
                 </div>
-                <!-- 封面图：添加 referrerpolicy="no-referrer" 绕过防盗链 -->
                 <img 
                   id="coverImage"
                   src="https://i1.hdslb.com/bfs/archive/7844e009fd7569454f5f76a1acc3bc30a12685f9.jpg@672w_378h_1c.webp" 
@@ -773,62 +833,6 @@
           </div>
         </div>
       </main>
-
-      <!-- ===== 右侧：个人品牌 ===== -->
-      <aside class="sidebar">
-        <div class="bio-card">
-          <div class="brand-avatar">
-            <!-- 头像：添加 referrerpolicy="no-referrer" 绕过防盗链 -->
-            <img 
-              src="https://i1.hdslb.com/bfs/face/47aa8b68854951ce0930f2ea5097a8bca6dae949.jpg@240w_240h_1c_1s_!web-avatar-nav.webp" 
-              alt="QIYINZOU 头像"
-              referrerpolicy="no-referrer"
-              loading="lazy"
-              onerror="this.style.display='none'"
-            >
-          </div>
-          <div class="bio-name">QIYINZOU</div>
-          <div class="bio-title">视频创作者 · 剪辑师</div>
-
-          <div class="bio-text">
-            擅长 <span class="highlight">快影</span>、<span class="highlight">剪映</span>、<span class="highlight">AM</span>，<br>
-            将灵感转化为有质感的影像。<br><br>
-            记录剪辑心得与创作过程，<br>
-            探索视觉表达的边界。<br><br>
-            <span style="color:var(--text-muted); font-size:0.75rem;">// 持续创作，持续精进</span>
-          </div>
-
-          <div class="skill-tags">
-            <span>✦ 快影</span>
-            <span>✦ 剪映</span>
-            <span>✦ AM</span>
-            <span style="opacity:0.3;">+ 剪辑</span>
-          </div>
-
-          <div class="bio-tags">
-            <span>#视频创作</span>
-            <span>#剪辑</span>
-            <span>#影像</span>
-            <span>#创意</span>
-          </div>
-        </div>
-
-        <div class="edu-card">
-          <h4>▸ Education</h4>
-          <div class="edu-item">
-            <div class="school">集美大学</div>
-            <div class="major">软件工程学士 · 计算机工程学院</div>
-            <div class="year">2022 – 2026</div>
-          </div>
-          <div style="margin-top: 0.8rem; font-size: 0.65rem; color: var(--accent-dim); letter-spacing: 0.4px; transition: color 0.4s ease;">
-            · 持续学习 ·
-          </div>
-        </div>
-
-        <div style="font-size: 0.55rem; color: var(--text-muted); text-align: right; letter-spacing: 0.6px; margin-top: -0.6rem; transition: color 0.4s ease;">
-          v2.0 · 科技视界
-        </div>
-      </aside>
     </div>
   </div>
 
