@@ -1,1 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAGNote · 视频推荐</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <style>
+    /* ... 样式代码与之前完全一致，为节省篇幅省略 ... */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0d0a12;
+      color: #e8e0f0;
+      padding: 2rem 1.5rem;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 1.8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      margin-bottom: 2.8rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #f0eaff 0%, #b8a0d8 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo small {
+      font-weight: 400;
+      font-size: 0.9rem;
+      -webkit-text-fill-color: rgba(200, 190, 220, 0.4);
+      background: none;
+      margin-left: 0.4rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+      font-size: 0.85rem;
+      color: rgba(200, 190, 220, 0.5);
+      letter-spacing: 0.3px;
+    }
+
+    .header-right span {
+      cursor: default;
+      transition: color 0.2s;
+    }
+
+    .header-right span:hover {
+      color: rgba(220, 210, 240, 0.8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 2.8rem;
+    }
+
+    /* ===== 左侧：视频推荐区 ===== */
+    .video-feature {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 24px;
+      padding: 2rem 1.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .video-feature:hover {
+      border-color: rgba(200, 180, 255, 0.08);
+    }
+
+    .feature-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: rgba(200, 190, 220, 0.3);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .feature-label .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(200,180,255,0.08), transparent);
+    }
+
+    .video-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .video-cover {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #1a1520;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.3s ease;
+    }
+
+    .video-cover:hover {
+      border-color: rgba(200, 180, 255, 0.15);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .video-cover img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-cover .fallback-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, #1a1520, #2a1f35);
+      color: rgba(200, 190, 220, 0.15);
+      font-size: 0.9rem;
+      z-index: 0;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .fallback-bg .big-icon {
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+
+    .video-cover .play-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.2);
+      transition: background 0.3s ease;
+      z-index: 1;
+      cursor: pointer;
+    }
+
+    .video-cover:hover .play-overlay {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .play-overlay .play-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .video-cover:hover .play-icon {
+      background: rgba(200, 180, 255, 0.2);
+      border-color: rgba(200, 180, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    .play-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: rgba(255, 255, 255, 0.85);
+      margin-left: 4px;
+    }
+
+    .video-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .video-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #f0ecf7;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .video-title a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .video-title a:hover {
+      color: #c8b8e8;
+    }
+
+    .video-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+      color: rgba(180, 170, 200, 0.5);
+    }
+
+    .video-meta .tag {
+      background: rgba(200, 180, 255, 0.06);
+      padding: 0.15rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.65rem;
+      color: rgba(200, 190, 220, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .video-description {
+      font-size: 0.9rem;
+      color: rgba(210, 200, 230, 0.6);
+      line-height: 1.6;
+      margin-top: 0.2rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .video-description strong {
+      color: rgba(230, 220, 250, 0.8);
+      font-weight: 500;
+    }
+
+    .video-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+      padding: 0.5rem 1.6rem;
+      background: rgba(200, 180, 240, 0.06);
+      border: 1px solid rgba(200, 180, 255, 0.1);
+      border-radius: 60px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(220, 210, 240, 0.7);
+      text-decoration: none;
+      transition: all 0.25s ease;
+      width: fit-content;
+    }
+
+    .video-link-btn:hover {
+      background: rgba(200, 180, 240, 0.12);
+      border-color: rgba(200, 180, 255, 0.2);
+      color: #f0ecf7;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    .video-link-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .related-section {
+      margin-top: 1.8rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .related-section .label {
+      font-size: 0.65rem;
+      color: rgba(200, 190, 220, 0.25);
+      letter-spacing: 0.4px;
+      margin-bottom: 0.8rem;
+    }
+
+    .related-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+      color: rgba(200, 190, 220, 0.35);
+    }
+
+    .related-list span {
+      transition: color 0.2s;
+      cursor: default;
+    }
+
+    .related-list span:hover {
+      color: rgba(200, 190, 220, 0.6);
+    }
+
+    .related-list .sep {
+      color: rgba(200, 190, 220, 0.1);
+    }
+
+    .upload-area {
+      margin-top: 1.5rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .upload-area .label {
+      font-size: 0.65rem;
+      color: rgba(200, 190, 220, 0.25);
+      letter-spacing: 0.4px;
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+
+    .upload-box {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .upload-box input[type="file"] {
+      display: none;
+    }
+
+    .upload-box .file-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1.2rem;
+      background: rgba(200, 180, 240, 0.06);
+      border: 1px solid rgba(200, 180, 255, 0.1);
+      border-radius: 60px;
+      font-size: 0.75rem;
+      color: rgba(220, 210, 240, 0.6);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .upload-box .file-label:hover {
+      background: rgba(200, 180, 240, 0.12);
+      border-color: rgba(200, 180, 255, 0.2);
+      color: #f0ecf7;
+    }
+
+    .upload-box .file-name {
+      font-size: 0.7rem;
+      color: rgba(200, 190, 220, 0.3);
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .upload-box .upload-status {
+      font-size: 0.7rem;
+      color: rgba(100, 220, 150, 0.5);
+    }
+
+    .upload-preview {
+      margin-top: 0.8rem;
+      display: none;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.6rem 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .upload-preview img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .upload-preview .info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .upload-preview .info .name {
+      font-size: 0.8rem;
+      color: rgba(220, 210, 240, 0.6);
+    }
+
+    .upload-preview .info .size {
+      font-size: 0.65rem;
+      color: rgba(200, 190, 220, 0.25);
+    }
+
+    .upload-preview .use-btn {
+      margin-left: auto;
+      padding: 0.2rem 1rem;
+      background: rgba(200, 180, 240, 0.06);
+      border: 1px solid rgba(200, 180, 255, 0.08);
+      border-radius: 30px;
+      font-size: 0.65rem;
+      color: rgba(220, 210, 240, 0.5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .upload-preview .use-btn:hover {
+      background: rgba(200, 180, 240, 0.12);
+      color: #f0ecf7;
+    }
+
+    /* ===== 右侧侧边栏 ===== */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2.2rem;
+    }
+
+    /* 头像样式 */
+    .brand-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1.5px solid rgba(200, 180, 255, 0.08);
+      margin-bottom: 0.8rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      flex-shrink: 0;
+      background: #1a1520;
+    }
+
+    .brand-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .bio-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 20px;
+      padding: 1.8rem 1.6rem;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(4px);
+      transition: all 0.3s ease;
+    }
+
+    .bio-card:hover {
+      border-color: rgba(200, 180, 255, 0.06);
+    }
+
+    .bio-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #f0ecf7;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      margin-bottom: 0.2rem;
+      background: linear-gradient(135deg, #f5f0ff 0%, #c8b8e0 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .bio-title {
+      font-size: 0.7rem;
+      color: rgba(200, 190, 220, 0.3);
+      letter-spacing: 0.4px;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    .bio-text {
+      font-size: 0.85rem;
+      color: rgba(210, 200, 230, 0.6);
+      line-height: 1.8;
+      margin-bottom: 0.2rem;
+    }
+
+    .bio-text .highlight {
+      color: rgba(230, 220, 250, 0.85);
+      font-weight: 400;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.6rem;
+      margin: 1rem 0 0.6rem;
+    }
+
+    .skill-tags span {
+      background: rgba(200, 180, 255, 0.04);
+      padding: 0.25rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.65rem;
+      color: rgba(200, 190, 220, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      letter-spacing: 0.2px;
+      font-weight: 400;
+      transition: all 0.2s ease;
+    }
+
+    .skill-tags span:hover {
+      background: rgba(200, 180, 255, 0.08);
+      border-color: rgba(200, 180, 255, 0.1);
+      color: rgba(230, 220, 250, 0.7);
+    }
+
+    .skill-tags .highlight-tag {
+      background: rgba(200, 180, 255, 0.06);
+      border-color: rgba(200, 180, 255, 0.06);
+      color: rgba(200, 190, 220, 0.4);
+      font-size: 0.6rem;
+    }
+
+    .bio-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.6rem;
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .bio-tags span {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.6rem;
+      color: rgba(200, 190, 220, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      letter-spacing: 0.3px;
+      font-weight: 400;
+    }
+
+    .edu-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 20px;
+      padding: 1.6rem 1.6rem;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .edu-card h4 {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: rgba(200, 190, 220, 0.2);
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+
+    .edu-item .school {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #e8e0f0;
+    }
+
+    .edu-item .major {
+      font-size: 0.8rem;
+      color: rgba(200, 190, 220, 0.5);
+    }
+
+    .edu-item .year {
+      font-size: 0.7rem;
+      color: rgba(180, 170, 200, 0.3);
+      margin-top: 0.1rem;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 2.4rem;
+      }
+      .sidebar {
+        order: -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+      }
+      .bio-card, .edu-card {
+        padding: 1.4rem 1.2rem;
+      }
+      .brand-avatar {
+        width: 56px;
+        height: 56px;
+      }
+      .bio-name {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 550px) {
+      body {
+        padding: 1.2rem 1rem;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+        margin-bottom: 1.8rem;
+      }
+      .header-right {
+        font-size: 0.75rem;
+        gap: 1rem;
+      }
+      .sidebar {
+        grid-template-columns: 1fr;
+      }
+      .video-title {
+        font-size: 1.2rem;
+      }
+      .video-feature {
+        padding: 1.5rem 1.2rem;
+      }
+      .play-overlay .play-icon {
+        width: 48px;
+        height: 48px;
+      }
+      .play-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+      .upload-box {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .upload-preview {
+        flex-wrap: wrap;
+      }
+      .upload-preview .use-btn {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+      }
+      .brand-avatar {
+        width: 48px;
+        height: 48px;
+      }
+      .bio-name {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        RAGNote
+        <small>⎯ 视频推荐</small>
+      </div>
+      <div class="header-right">
+        <span>首页</span>
+        <span>归档</span>
+        <span>关于</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- 左侧：视频推荐区 -->
+      <main>
+        <div class="video-feature">
+          <div class="feature-label">
+            <span>✦ 精选推荐</span>
+            <span class="line"></span>
+          </div>
+
+          <div class="video-card">
+            <a href="https://www.bilibili.com/video/BV1ShZkB5EHL/?spm_id_from=333.337.search-card.all.click&vd_source=5b482a70c480cbaaca20960fa7f9fafc" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+              <div class="video-cover" id="coverContainer">
+                <div class="fallback-bg">
+                  <span class="big-icon">🎬</span>
+                  <span>25时 · 荒野求生</span>
+                </div>
+                <img 
+                  id="coverImage"
+                  src="https://i1.hdslb.com/bfs/archive/7844e009fd7569454f5f76a1acc3bc30a12685f9.jpg@672w_378h_1c.webp" 
+                  alt="25时（荒野求生）合集一口气看完"
+                  loading="lazy"
+                  onerror="this.style.display='none'"
+                >
+                <div class="play-overlay">
+                  <div class="play-icon">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <div class="video-info">
+              <h2 class="video-title">
+                <a href="https://www.bilibili.com/video/BV1ShZkB5EHL/?spm_id_from=333.337.search-card.all.click&vd_source=5b482a70c480cbaaca20960fa7f9fafc" target="_blank" rel="noopener noreferrer">
+                  25时（荒野求生）合集一口气看完
+                </a>
+              </h2>
+              <div class="video-meta">
+                <span>📅 2026-02-17</span>
+                <span class="tag">#合集</span>
+                <span class="tag">#荒野求生</span>
+                <span class="tag">#25时</span>
+                <span class="tag">#一口气看完</span>
+              </div>
+              <div class="video-description">
+                <strong>“25时荒野求生”</strong> 系列合集，一口气看完所有精彩内容！<br>
+                包含从第一集到完结篇的完整冒险，以及相关衍生创作。
+              </div>
+              <a href="https://www.bilibili.com/video/BV1ShZkB5EHL/?spm_id_from=333.337.search-card.all.click&vd_source=5b482a70c480cbaaca20960fa7f9fafc" target="_blank" rel="noopener noreferrer" class="video-link-btn">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                前往 B站 观看
+              </a>
+            </div>
+          </div>
+
+          <div class="upload-area">
+            <span class="label">📤 上传自定义封面图</span>
+            <div class="upload-box">
+              <input type="file" id="fileInput" accept="image/*">
+              <label for="fileInput" class="file-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                选择图片
+              </label>
+              <span class="file-name" id="fileName">未选择文件</span>
+              <span class="upload-status" id="uploadStatus"></span>
+            </div>
+            <div class="upload-preview" id="uploadPreview">
+              <img id="previewImg" src="" alt="预览">
+              <div class="info">
+                <span class="name" id="previewName">image.jpg</span>
+                <span class="size" id="previewSize">0 KB</span>
+              </div>
+              <button class="use-btn" id="useBtn">✓ 应用到封面</button>
+            </div>
+          </div>
+
+          <div class="related-section">
+            <div class="label">相关推荐</div>
+            <div class="related-list">
+              <span>25时荒野求生（2）</span>
+              <span class="sep">·</span>
+              <span>25时荒野求生(5)</span>
+              <span class="sep">·</span>
+              <span>【全熟】和25时一起玩mc吧</span>
+              <span class="sep">·</span>
+              <span>25时声优崩坏篇</span>
+              <span class="sep">·</span>
+              <span>25时荒野求生（4）</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- ===== 右侧：个人品牌 ===== -->
+      <aside class="sidebar">
+        <div class="bio-card">
+          <!-- 头像 -->
+          <div class="brand-avatar">
+            <img 
+              src="https://i1.hdslb.com/bfs/face/47aa8b68854951ce0930f2ea5097a8bca6dae949.jpg@240w_240h_1c_1s_!web-avatar-nav.webp" 
+              alt="QIYINZOU 头像"
+              loading="lazy"
+              onerror="this.style.display='none'"
+            >
+          </div>
+          
+          <div class="bio-name">QIYINZOU</div>
+          <div class="bio-title">视频创作者 · 剪辑师</div>
+
+          <div class="bio-text">
+            <span class="highlight">QIYINZOU</span> 是一个专注于视频创作的品牌。<br><br>
+            擅长用 <span class="highlight">快影</span>、<span class="highlight">剪映</span>、<span class="highlight">AM</span> 等工具，<br>
+            将灵感转化为有质感的影像作品。<br><br>
+            这里记录剪辑心得、创作过程，<br>
+            以及那些值得被看见的画面。<br><br>
+            <span style="color:rgba(200,190,220,0.3); font-size:0.8rem;">持续创作，持续精进。</span>
+          </div>
+
+          <div class="skill-tags">
+            <span>✦ 快影</span>
+            <span>✦ 剪映</span>
+            <span>✦ AM</span>
+            <span class="highlight-tag">+ 视频剪辑</span>
+          </div>
+
+          <div class="bio-tags">
+            <span>#视频创作</span>
+            <span>#剪辑</span>
+            <span>#影像</span>
+            <span>#创意</span>
+          </div>
+        </div>
+
+        <div class="edu-card">
+          <h4>Education</h4>
+          <div class="edu-item">
+            <div class="school">集美大学</div>
+            <div class="major">软件工程学士 · 计算机工程学院</div>
+            <div class="year">2022 – 2026</div>
+          </div>
+          <div style="margin-top: 0.8rem; font-size: 0.7rem; color: rgba(180,170,200,0.2); letter-spacing: 0.4px;">
+            · 持续学习 ·
+          </div>
+        </div>
+
+        <div style="font-size: 0.6rem; color: rgba(180,170,200,0.08); text-align: right; letter-spacing: 0.4px; margin-top: -0.8rem;">
+          v0.3 · 灵感
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const previewContainer = document.getElementById('uploadPreview');
+    const previewImg = document.getElementById('previewImg');
+    const previewName = document.getElementById('previewName');
+    const previewSize = document.getElementById('previewSize');
+    const useBtn = document.getElementById('useBtn');
+    const coverImage = document.getElementById('coverImage');
+    const fallbackBg = document.querySelector('.fallback-bg');
+
+    let uploadedImageUrl = null;
+
+    fileInput.addEventListener('change', function(e) {
+      const file = this.files[0];
+      if (!file) return;
+
+      fileName.textContent = file.name;
+
+      if (!file.type.startsWith('image/')) {
+        uploadStatus.textContent = '⚠️ 请选择图片文件';
+        uploadStatus.style.color = 'rgba(255,150,150,0.5)';
+        previewContainer.style.display = 'none';
+        return;
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        uploadStatus.textContent = '⚠️ 图片过大 (最大10MB)';
+        uploadStatus.style.color = 'rgba(255,150,150,0.5)';
+        previewContainer.style.display = 'none';
+        return;
+      }
+
+      uploadStatus.textContent = '✅ 已上传';
+      uploadStatus.style.color = 'rgba(100,220,150,0.5)';
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImageUrl = e.target.result;
+        previewImg.src = uploadedImageUrl;
+        previewName.textContent = file.name;
+        previewSize.textContent = (file.size / 1024).toFixed(1) + ' KB';
+        previewContainer.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    useBtn.addEventListener('click', function() {
+      if (uploadedImageUrl) {
+        coverImage.src = uploadedImageUrl;
+        coverImage.style.display = 'block';
+        fallbackBg.style.display = 'none';
+        uploadStatus.textContent = '✅ 已应用到封面';
+        uploadStatus.style.color = 'rgba(100,220,150,0.5)';
+        setTimeout(() => {
+          uploadStatus.textContent = '✅ 已上传';
+        }, 3000);
+      }
+    });
+
+    coverImage.addEventListener('error', function() {
+      fallbackBg.style.display = 'flex';
+    });
+  </script>
+</body>
+</html>
