@@ -6,7 +6,7 @@
   <title>QIYINZOU · 幻想与现实</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
   <style>
     /* ===== CSS 变量 — 日间/夜间模式 ===== */
     :root {
@@ -53,10 +53,11 @@
       --toggle-hover: rgba(255, 255, 255, 0.1);
       --toggle-icon: rgba(200, 210, 230, 0.3);
       --toggle-icon-hover: #f0ecf7;
-      --game-bg: rgba(0, 0, 0, 0.3);
-      --game-text: rgba(200, 210, 230, 0.6);
-      --game-score: #00d4ff;
-      --game-overlay: rgba(0, 0, 0, 0.5);
+      --quote-bg: rgba(255, 255, 255, 0.02);
+      --quote-border: rgba(0, 255, 255, 0.05);
+      --quote-name: #f0ecf7;
+      --quote-era: rgba(200, 210, 230, 0.3);
+      --quote-text: rgba(210, 210, 230, 0.7);
     }
 
     [data-theme="light"] {
@@ -103,10 +104,11 @@
       --toggle-hover: rgba(0, 0, 0, 0.1);
       --toggle-icon: rgba(60, 70, 100, 0.4);
       --toggle-icon-hover: #1a1a2e;
-      --game-bg: rgba(255, 255, 255, 0.1);
-      --game-text: rgba(60, 70, 100, 0.6);
-      --game-score: #0077cc;
-      --game-overlay: rgba(255, 255, 255, 0.4);
+      --quote-bg: rgba(255, 255, 255, 0.4);
+      --quote-border: rgba(0, 50, 80, 0.06);
+      --quote-name: #1a1a2e;
+      --quote-era: rgba(60, 70, 100, 0.4);
+      --quote-text: rgba(60, 70, 100, 0.6);
     }
 
     /* ===== 基础样式 ===== */
@@ -124,7 +126,7 @@
       position: relative;
       overflow-x: hidden;
       transition: background 0.4s ease, color 0.4s ease;
-      touch-action: manipulation; /* 改善触摸 */
+      touch-action: manipulation;
     }
 
     body::before {
@@ -428,7 +430,7 @@
       transition: color 0.4s ease;
     }
 
-    /* ===== 右侧：视频 + 游戏 ===== */
+    /* ===== 右侧：视频 + 名言 ===== */
     .main-content {
       display: flex;
       flex-direction: column;
@@ -668,150 +670,130 @@
     .related-list span:hover { color: var(--related-hover); }
     .related-list .sep { color: var(--border-color); transition: color 0.4s ease; }
 
-    /* ===== 游戏区域 ===== */
-    .game-section {
+    /* ===== 名人名言板块 ===== */
+    .quotes-section {
       background: var(--bg-card);
       border-radius: 24px;
-      padding: 1.8rem 2rem;
+      padding: 2rem 2rem;
       border: 1px solid var(--border-color);
       backdrop-filter: blur(10px);
       transition: all 0.4s ease;
     }
-    .game-section:hover {
+    .quotes-section:hover {
       border-color: var(--border-hover);
       box-shadow: 0 0 40px var(--shadow-color);
     }
 
-    .game-header {
+    .quotes-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.8rem;
       flex-wrap: wrap;
       gap: 0.8rem;
     }
-
-    .game-title {
-      font-size: 1.1rem;
+    .quotes-title {
+      font-size: 1.2rem;
       font-weight: 600;
       color: var(--text-primary);
       letter-spacing: -0.01em;
     }
-    .game-title .accent {
+    .quotes-title .accent {
       color: var(--accent);
     }
-
-    .game-tabs {
-      display: flex;
-      gap: 0.4rem;
-    }
-    .game-tab {
-      padding: 0.3rem 1rem;
-      border-radius: 30px;
+    .quotes-sub {
       font-size: 0.7rem;
-      font-weight: 500;
-      background: var(--btn-bg);
-      border: 1px solid var(--btn-border);
-      color: var(--btn-text);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: inherit;
-    }
-    .game-tab:hover {
-      background: var(--btn-hover-bg);
-      border-color: var(--btn-hover-border);
-      color: var(--btn-hover-text);
-    }
-    .game-tab.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-      box-shadow: 0 0 20px var(--accent-glow);
+      color: var(--text-muted);
+      letter-spacing: 0.4px;
     }
 
-    .game-container {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: var(--game-bg);
+    .quotes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .quote-card {
+      background: var(--quote-bg);
       border-radius: 16px;
-      border: 1px solid var(--border-color);
-      min-height: 300px;
-      padding: 0.5rem;
-      touch-action: none; /* 防止触摸滚动干扰 */
-    }
-
-    .game-container canvas {
-      display: block;
-      width: 100%;
-      max-width: 500px;
-      height: auto;
-      aspect-ratio: 1 / 1;
-      background: var(--bg-secondary);
-      border-radius: 12px;
-      image-rendering: pixelated;
-      touch-action: none; /* 防止触摸滚动 */
-    }
-
-    .game-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      padding: 1.4rem 1.2rem;
+      border: 1px solid var(--quote-border);
+      transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: var(--game-overlay);
-      border-radius: 16px;
-      color: var(--text-primary);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
+      gap: 0.6rem;
     }
-    .game-overlay.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .game-overlay .score-text {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--game-score);
-    }
-    .game-overlay .restart-btn {
-      margin-top: 0.8rem;
-      padding: 0.4rem 1.6rem;
-      border-radius: 30px;
-      background: var(--btn-bg);
-      border: 1px solid var(--btn-border);
-      color: var(--btn-text);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: inherit;
-      font-size: 0.8rem;
-    }
-    .game-overlay .restart-btn:hover {
-      background: var(--btn-hover-bg);
-      border-color: var(--btn-hover-border);
-      color: var(--btn-hover-text);
+    .quote-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 0 30px var(--shadow-color);
+      transform: translateY(-3px);
     }
 
-    /* 游戏内得分显示 */
-    .game-score-display {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      font-size: 0.9rem;
+    .quote-avatar {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .quote-avatar .initials {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 600;
-      color: var(--game-score);
-      background: rgba(0,0,0,0.3);
-      padding: 0.2rem 0.8rem;
-      border-radius: 20px;
-      backdrop-filter: blur(4px);
-      border: 1px solid var(--border-color);
-      pointer-events: none;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .quote-avatar .name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--quote-name);
+    }
+    .quote-avatar .era {
+      font-size: 0.65rem;
+      color: var(--quote-era);
+      margin-left: auto;
+    }
+
+    .quote-text {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--quote-text);
+      font-style: italic;
+      padding-left: 0.2rem;
+      border-left: 2px solid var(--accent-dim);
+      padding-left: 0.8rem;
+    }
+    .quote-text::before {
+      content: '“';
+      color: var(--accent);
+      font-size: 1.2rem;
+      font-weight: 700;
+      opacity: 0.5;
+      margin-right: 0.2rem;
+    }
+    .quote-text::after {
+      content: '”';
+      color: var(--accent);
+      font-size: 1.2rem;
+      font-weight: 700;
+      opacity: 0.5;
+      margin-left: 0.2rem;
+    }
+
+    .quote-tag {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.5rem;
+      text-align: right;
     }
 
     /* ===== 响应式 ===== */
@@ -819,6 +801,7 @@
       .grid { grid-template-columns: 1fr; gap: 2.4rem; }
       .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
       .main-content { gap: 2rem; }
+      .quotes-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     }
 
     @media (max-width: 600px) {
@@ -829,15 +812,13 @@
       .sidebar { grid-template-columns: 1fr; }
       .video-title { font-size: 1.1rem; }
       .video-feature { padding: 1.5rem 1.2rem; }
-      .game-section { padding: 1.2rem 1rem; }
+      .quotes-section { padding: 1.5rem 1.2rem; }
       .play-overlay .play-icon { width: 56px; height: 56px; }
       .play-icon svg { width: 22px; height: 22px; }
       .bio-name { font-size: 1.4rem; }
       .brand-avatar { width: 56px; height: 56px; }
       .theme-toggle .toggle-label { display: none; }
-      .game-tabs { gap: 0.2rem; }
-      .game-tab { font-size: 0.6rem; padding: 0.2rem 0.6rem; }
-      .game-container canvas { max-width: 100%; }
+      .quotes-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 400px) {
@@ -928,7 +909,7 @@
         </div>
       </aside>
 
-      <!-- ===== 右侧：视频 + 游戏 ===== -->
+      <!-- ===== 右侧：视频 + 名言 ===== -->
       <div class="main-content">
         <!-- 视频推荐 -->
         <main>
@@ -999,25 +980,81 @@
           </div>
         </main>
 
-        <!-- ===== 游戏区域 ===== -->
-        <section class="game-section">
-          <div class="game-header">
-            <div class="game-title">
-              <span class="accent">◆</span> 经典游戏
+        <!-- ===== 名人名言板块 ===== -->
+        <section class="quotes-section">
+          <div class="quotes-header">
+            <div class="quotes-title">
+              <span class="accent">◆</span> 历史回响
+              <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-muted); margin-left: 0.8rem;">跨越时空的智慧</span>
             </div>
-            <div class="game-tabs" id="gameTabs">
-              <button class="game-tab active" data-game="snake">贪吃蛇</button>
-              <button class="game-tab" data-game="tetris">俄罗斯方块</button>
-              <button class="game-tab" data-game="breakout">打砖块</button>
-            </div>
+            <div class="quotes-sub">古今中外 · 思想之光</div>
           </div>
 
-          <div class="game-container" id="gameContainer">
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            <div class="game-score-display" id="gameScore">0</div>
-            <div class="game-overlay" id="gameOverlay">
-              <div class="score-text" id="overlayScore">得分: 0</div>
-              <button class="restart-btn" id="restartBtn">重新开始</button>
+          <div class="quotes-grid">
+            <!-- 孔子 -->
+            <div class="quote-card">
+              <div class="quote-avatar">
+                <span class="initials">孔</span>
+                <span class="name">孔子</span>
+                <span class="era">春秋 · 前551-前479</span>
+              </div>
+              <div class="quote-text">学而不思则罔，思而不学则殆。</div>
+              <div class="quote-tag">#儒家 · 论语</div>
+            </div>
+
+            <!-- 老子 -->
+            <div class="quote-card">
+              <div class="quote-avatar">
+                <span class="initials">老</span>
+                <span class="name">老子</span>
+                <span class="era">春秋 · 约前571-前471</span>
+              </div>
+              <div class="quote-text">上善若水，水善利万物而不争。</div>
+              <div class="quote-tag">#道家 · 道德经</div>
+            </div>
+
+            <!-- 苏格拉底 -->
+            <div class="quote-card">
+              <div class="quote-avatar">
+                <span class="initials">苏</span>
+                <span class="name">苏格拉底</span>
+                <span class="era">古希腊 · 前470-前399</span>
+              </div>
+              <div class="quote-text">我唯一知道的是我一无所知。</div>
+              <div class="quote-tag">#西方哲学 · 自知</div>
+            </div>
+
+            <!-- 亚里士多德 -->
+            <div class="quote-card">
+              <div class="quote-avatar">
+                <span class="initials">亚</span>
+                <span class="name">亚里士多德</span>
+                <span class="era">古希腊 · 前384-前322</span>
+              </div>
+              <div class="quote-text">幸福是灵魂的一种合乎德性的现实活动。</div>
+              <div class="quote-tag">#伦理学 · 尼各马可</div>
+            </div>
+
+            <!-- 莎士比亚 -->
+            <div class="quote-card">
+              <div class="quote-avatar">
+                <span class="initials">莎</span>
+                <span class="name">莎士比亚</span>
+                <span class="era">英国 · 1564-1616</span>
+              </div>
+              <div class="quote-text">人生如戏，戏如人生。</div>
+              <div class="quote-tag">#戏剧 · 皆大欢喜</div>
+            </div>
+
+            <!-- 鲁迅 -->
+            <div class="quote-card">
+              <div class="quote-avatar">
+                <span class="initials">鲁</span>
+                <span class="name">鲁迅</span>
+                <span class="era">中国 · 1881-1936</span>
+              </div>
+              <div class="quote-text">世上本没有路，走的人多了，也便成了路。</div>
+              <div class="quote-tag">#现代文学 · 故乡</div>
             </div>
           </div>
         </section>
@@ -1073,506 +1110,6 @@
       }
 
       setTheme(currentTheme);
-    })();
-
-    // =============================================
-    //  游戏引擎 - 全触摸支持 + 打砖块倍增机制
-    // =============================================
-    (function() {
-      const canvas = document.getElementById('gameCanvas');
-      const ctx = canvas.getContext('2d');
-      const scoreDisplay = document.getElementById('gameScore');
-      const overlay = document.getElementById('gameOverlay');
-      const overlayScore = document.getElementById('overlayScore');
-      const restartBtn = document.getElementById('restartBtn');
-      const tabs = document.querySelectorAll('.game-tab');
-
-      const SIZE = 400;
-      canvas.width = SIZE;
-      canvas.height = SIZE;
-
-      let currentGame = 'snake';
-      let gameInterval = null;
-      let gameRunning = false;
-
-      // ----- 工具函数 -----
-      function showOverlay(score, win = false) {
-        overlayScore.textContent = win ? '🎉 通关！得分: ' + score : '游戏结束 · 得分: ' + score;
-        overlay.classList.add('show');
-      }
-      function hideOverlay() { overlay.classList.remove('show'); }
-      function stopGame() {
-        if (gameInterval) { clearInterval(gameInterval); gameInterval = null; }
-        gameRunning = false;
-      }
-      function startGameLoop(loopFn, interval) {
-        stopGame();
-        gameRunning = true;
-        hideOverlay();
-        gameInterval = setInterval(loopFn, interval);
-      }
-
-      // ----- 触摸滑动检测 (用于贪吃蛇和俄罗斯方块) -----
-      let touchStartX = 0, touchStartY = 0;
-      let touchMoved = false;
-
-      canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        touchStartX = (touch.clientX - rect.left) * (canvas.width / rect.width);
-        touchStartY = (touch.clientY - rect.top) * (canvas.height / rect.height);
-        touchMoved = false;
-      }, {passive: false});
-
-      canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (!gameRunning) return;
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
-        const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
-
-        // 打砖块：直接拖动挡板
-        if (currentGame === 'breakout') {
-          breakout.paddle.x = x - breakout.paddle.width/2;
-          if (breakout.paddle.x < 0) breakout.paddle.x = 0;
-          if (breakout.paddle.x + breakout.paddle.width > SIZE) breakout.paddle.x = SIZE - breakout.paddle.width;
-          touchMoved = true;
-          return;
-        }
-
-        // 其他游戏：记录滑动方向（只在touchstart后第一次有效）
-        if (!touchMoved) {
-          const dx = x - touchStartX;
-          const dy = y - touchStartY;
-          if (Math.abs(dx) > 20 || Math.abs(dy) > 20) {
-            touchMoved = true;
-            // 判断方向
-            if (Math.abs(dx) > Math.abs(dy)) {
-              // 水平滑动
-              if (dx > 0) handleSwipe('right');
-              else handleSwipe('left');
-            } else {
-              if (dy > 0) handleSwipe('down');
-              else handleSwipe('up');
-            }
-          }
-        }
-      }, {passive: false});
-
-      canvas.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        if (!touchMoved && currentGame !== 'breakout') {
-          // 点击也可以视为某种操作？暂时忽略
-        }
-      }, {passive: false});
-
-      function handleSwipe(dir) {
-        if (!gameRunning) return;
-        switch (currentGame) {
-          case 'snake':
-            switch (dir) {
-              case 'up': if (snake.direction !== 'down') snake.nextDirection = 'up'; break;
-              case 'down': if (snake.direction !== 'up') snake.nextDirection = 'down'; break;
-              case 'left': if (snake.direction !== 'right') snake.nextDirection = 'left'; break;
-              case 'right': if (snake.direction !== 'left') snake.nextDirection = 'right'; break;
-            }
-            break;
-          case 'tetris':
-            switch (dir) {
-              case 'left': if (!tetris.collide(tetris.piece, tetris.board, -1, 0)) tetris.piece.x--; break;
-              case 'right': if (!tetris.collide(tetris.piece, tetris.board, 1, 0)) tetris.piece.x++; break;
-              case 'down': tetris.update(); break;
-              case 'up': tetris.rotate(); break;
-            }
-            break;
-        }
-      }
-
-      // ----- 贪吃蛇 -----
-      let snake = {
-        body: [], direction: 'right', nextDirection: 'right', food: null, score: 0, gridSize: 20,
-        init() {
-          this.body = [{x:8,y:10},{x:7,y:10},{x:6,y:10}];
-          this.direction = 'right'; this.nextDirection = 'right'; this.score = 0;
-          this.spawnFood(); scoreDisplay.textContent = '0';
-        },
-        spawnFood() {
-          const size = this.gridSize;
-          let pos; do {
-            pos = {x: Math.floor(Math.random()*size), y: Math.floor(Math.random()*size)};
-          } while (this.body.some(seg => seg.x===pos.x && seg.y===pos.y));
-          this.food = pos;
-        },
-        update() {
-          this.direction = this.nextDirection;
-          const head = {...this.body[0]};
-          switch(this.direction) {
-            case 'right': head.x++; break; case 'left': head.x--; break;
-            case 'up': head.y--; break; case 'down': head.y++; break;
-          }
-          if (head.x === this.food.x && head.y === this.food.y) {
-            this.body.unshift(head); this.score++; scoreDisplay.textContent = this.score; this.spawnFood();
-          } else { this.body.pop(); this.body.unshift(head); }
-          const collide = this.body.slice(1).some(seg => seg.x===head.x && seg.y===head.y);
-          if (head.x<0 || head.x>=this.gridSize || head.y<0 || head.y>=this.gridSize || collide) {
-            gameOver(this.score); return false;
-          }
-          return true;
-        },
-        draw() {
-          const cellSize = SIZE/this.gridSize;
-          ctx.clearRect(0,0,SIZE,SIZE);
-          // 网格
-          ctx.strokeStyle = 'rgba(255,255,255,0.03)'; ctx.lineWidth = 0.5;
-          for (let i=0; i<=this.gridSize; i++) {
-            ctx.beginPath(); ctx.moveTo(i*cellSize,0); ctx.lineTo(i*cellSize,SIZE); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(0,i*cellSize); ctx.lineTo(SIZE,i*cellSize); ctx.stroke();
-          }
-          // 食物
-          ctx.fillStyle = '#ff6b6b'; ctx.shadowColor = '#ff6b6b'; ctx.shadowBlur = 10;
-          ctx.beginPath(); ctx.arc(this.food.x*cellSize+cellSize/2, this.food.y*cellSize+cellSize/2, cellSize/2-1, 0, Math.PI*2); ctx.fill();
-          ctx.shadowBlur = 0;
-          // 蛇
-          this.body.forEach((seg,i) => {
-            const alpha = 1 - i/this.body.length*0.5;
-            ctx.fillStyle = `rgba(0, 212, 255, ${alpha})`;
-            ctx.shadowColor = 'rgba(0, 212, 255, 0.3)'; ctx.shadowBlur = 6;
-            ctx.fillRect(seg.x*cellSize+1, seg.y*cellSize+1, cellSize-2, cellSize-2);
-          });
-          ctx.shadowBlur = 0;
-        }
-      };
-
-      // ----- 俄罗斯方块 -----
-      let tetris = {
-        board: [], cols: 10, rows: 20, blockSize: 0, piece: null, nextPiece: null, score: 0, dropInterval: 500,
-        init() {
-          this.blockSize = SIZE/this.cols;
-          this.board = Array.from({length: this.rows}, () => Array(this.cols).fill(0));
-          this.score = 0; scoreDisplay.textContent = '0';
-          this.piece = this.createPiece(); this.nextPiece = this.createPiece();
-        },
-        createPiece() {
-          const shapes = [
-            [[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]],
-            [[1,0,0],[1,1,1]], [[0,0,1],[1,1,1]], [[0,1,1],[1,1,0]], [[1,1,0],[0,1,1]]
-          ];
-          const shape = shapes[Math.floor(Math.random()*shapes.length)];
-          return { shape, x: Math.floor((this.cols - shape[0].length)/2), y: 0 };
-        },
-        collide(piece, board, dx, dy) {
-          for (let r=0; r<piece.shape.length; r++) {
-            for (let c=0; c<piece.shape[0].length; c++) {
-              if (piece.shape[r][c]) {
-                const newX = piece.x + c + dx, newY = piece.y + r + dy;
-                if (newX<0 || newX>=this.cols || newY>=this.rows || (newY>=0 && board[newY][newX]!==0)) return true;
-              }
-            }
-          }
-          return false;
-        },
-        merge() {
-          for (let r=0; r<this.piece.shape.length; r++) {
-            for (let c=0; c<this.piece.shape[0].length; c++) {
-              if (this.piece.shape[r][c]) {
-                const y = this.piece.y + r, x = this.piece.x + c;
-                if (y>=0) this.board[y][x] = 1;
-              }
-            }
-          }
-          let cleared = 0;
-          for (let r=this.rows-1; r>=0; ) {
-            if (this.board[r].every(cell => cell!==0)) {
-              this.board.splice(r,1); this.board.unshift(Array(this.cols).fill(0)); cleared++;
-            } else r--;
-          }
-          if (cleared) { this.score += cleared*10; scoreDisplay.textContent = this.score; }
-          this.piece = this.nextPiece; this.nextPiece = this.createPiece();
-          if (this.collide(this.piece, this.board, 0, 0)) { gameOver(this.score); }
-        },
-        update() {
-          if (!this.piece) return false;
-          if (!this.collide(this.piece, this.board, 0, 1)) { this.piece.y++; return true; }
-          else { this.merge(); return true; }
-        },
-        rotate() {
-          const old = this.piece.shape;
-          const rotated = old[0].map((val, index) => old.map(row => row[index]).reverse());
-          const test = {shape: rotated, x: this.piece.x, y: this.piece.y};
-          if (!this.collide(test, this.board, 0, 0)) this.piece.shape = rotated;
-          else {
-            if (!this.collide(test, this.board, -1, 0)) { this.piece.shape = rotated; this.piece.x--; }
-            else if (!this.collide(test, this.board, 1, 0)) { this.piece.shape = rotated; this.piece.x++; }
-          }
-        },
-        draw() {
-          const bs = this.blockSize;
-          ctx.clearRect(0,0,SIZE,SIZE);
-          ctx.strokeStyle = 'rgba(255,255,255,0.03)'; ctx.lineWidth = 0.5;
-          for (let i=0; i<=this.cols; i++) { ctx.beginPath(); ctx.moveTo(i*bs,0); ctx.lineTo(i*bs,SIZE); ctx.stroke(); }
-          for (let i=0; i<=this.rows; i++) { ctx.beginPath(); ctx.moveTo(0,i*bs); ctx.lineTo(SIZE,i*bs); ctx.stroke(); }
-          for (let r=0; r<this.rows; r++) {
-            for (let c=0; c<this.cols; c++) {
-              if (this.board[r][c]) {
-                ctx.fillStyle = 'rgba(0,212,255,0.6)'; ctx.shadowColor = 'rgba(0,212,255,0.2)'; ctx.shadowBlur = 4;
-                ctx.fillRect(c*bs+1, r*bs+1, bs-2, bs-2);
-              }
-            }
-          }
-          ctx.shadowBlur = 0;
-          if (this.piece) {
-            for (let r=0; r<this.piece.shape.length; r++) {
-              for (let c=0; c<this.piece.shape[0].length; c++) {
-                if (this.piece.shape[r][c]) {
-                  const x = (this.piece.x+c)*bs, y = (this.piece.y+r)*bs;
-                  const grad = ctx.createRadialGradient(x+bs/2, y+bs/2, 2, x+bs/2, y+bs/2, bs/2);
-                  grad.addColorStop(0, '#00d4ff'); grad.addColorStop(1, '#0066aa');
-                  ctx.fillStyle = grad; ctx.shadowColor = 'rgba(0,212,255,0.4)'; ctx.shadowBlur = 10;
-                  ctx.fillRect(x+1, y+1, bs-2, bs-2);
-                }
-              }
-            }
-            ctx.shadowBlur = 0;
-          }
-        }
-      };
-
-      // ----- 打砖块（带倍增砖块） -----
-      let breakout = {
-        paddle: {x:0, y:0, width:80, height:12},
-        ball: {x:0, y:0, radius:6, dx:3, dy:-3},
-        bricks: [],
-        rows: 5, cols: 8,
-        score: 0, lives: 3,
-        doubleChance: 0.15, // 双倍砖块生成概率
-        normalKills: 0, // 累计击杀普通砖块数，用于生成新双倍
-        init() {
-          this.paddle.x = (SIZE - this.paddle.width)/2;
-          this.paddle.y = SIZE - 30;
-          this.ball.x = SIZE/2;
-          this.ball.y = this.paddle.y - this.ball.radius;
-          this.ball.dx = 3 * (Math.random()>0.5?1:-1);
-          this.ball.dy = -4;
-          this.bricks = [];
-          this.normalKills = 0;
-          const bw = (SIZE - 20) / this.cols;
-          const bh = 18;
-          const colors = ['#ff6b6b','#ffa94d','#ffd93d','#6bcb77','#4d96ff'];
-          for (let r=0; r<this.rows; r++) {
-            for (let c=0; c<this.cols; c++) {
-              const isDouble = Math.random() < this.doubleChance;
-              this.bricks.push({
-                x: 10 + c*bw, y: 30 + r*(bh+4), w: bw-2, h: bh,
-                alive: true, color: isDouble ? '#ffd700' : colors[r % colors.length],
-                isDouble: isDouble
-              });
-            }
-          }
-          this.score = 0; this.lives = 3;
-          scoreDisplay.textContent = '0';
-        },
-        spawnDoubleBrick() {
-          // 在空白位置生成一个双倍砖块
-          const maxAttempts = 50;
-          for (let i=0; i<maxAttempts; i++) {
-            const x = Math.random() * (SIZE - 60) + 30;
-            const y = Math.random() * (SIZE/2) + 30;
-            const w = 40, h = 18;
-            // 检查是否与其他砖块重叠
-            let overlap = false;
-            for (let b of this.bricks) {
-              if (!b.alive) continue;
-              if (x < b.x + b.w && x + w > b.x && y < b.y + b.h && y + h > b.y) { overlap = true; break; }
-            }
-            if (!overlap) {
-              this.bricks.push({
-                x, y, w, h,
-                alive: true,
-                color: '#ffd700',
-                isDouble: true
-              });
-              break;
-            }
-          }
-        },
-        update() {
-          this.ball.x += this.ball.dx;
-          this.ball.y += this.ball.dy;
-          if (this.ball.x - this.ball.radius < 0 || this.ball.x + this.ball.radius > SIZE) this.ball.dx = -this.ball.dx;
-          if (this.ball.y - this.ball.radius < 0) this.ball.dy = -this.ball.dy;
-          if (this.ball.y + this.ball.radius > SIZE) {
-            this.lives--;
-            if (this.lives <= 0) { gameOver(this.score); return false; }
-            else {
-              this.ball.x = SIZE/2; this.ball.y = this.paddle.y - this.ball.radius;
-              this.ball.dy = -4; this.ball.dx = 3 * (Math.random()>0.5?1:-1);
-              return true;
-            }
-          }
-          // 挡板碰撞
-          if (this.ball.dy > 0 &&
-              this.ball.y + this.ball.radius >= this.paddle.y &&
-              this.ball.y + this.ball.radius <= this.paddle.y + this.paddle.height &&
-              this.ball.x >= this.paddle.x && this.ball.x <= this.paddle.x + this.paddle.width) {
-            this.ball.dy = -this.ball.dy;
-            const hitPos = (this.ball.x - this.paddle.x) / this.paddle.width;
-            this.ball.dx = (hitPos - 0.5) * 6;
-          }
-          // 砖块碰撞
-          for (let i=this.bricks.length-1; i>=0; i--) {
-            const brick = this.bricks[i];
-            if (!brick.alive) continue;
-            const bx = brick.x, by = brick.y, bw = brick.w, bh = brick.h;
-            if (this.ball.x + this.ball.radius > bx && this.ball.x - this.ball.radius < bx + bw &&
-                this.ball.y + this.ball.radius > by && this.ball.y - this.ball.radius < by + bh) {
-              brick.alive = false;
-              // 得分
-              let addScore = brick.isDouble ? 20 : 10;
-              this.score += addScore;
-              scoreDisplay.textContent = this.score;
-              // 如果是双倍砖块，分裂成两个普通砖块
-              if (brick.isDouble) {
-                // 生成两个普通砖块在附近
-                const newW = bw/2, newH = bh/2;
-                for (let k=0; k<2; k++) {
-                  this.bricks.push({
-                    x: bx + (k===0 ? 0 : bw/2),
-                    y: by + (k===0 ? 0 : bh/2),
-                    w: newW,
-                    h: newH,
-                    alive: true,
-                    color: '#4d96ff',
-                    isDouble: false
-                  });
-                }
-              } else {
-                this.normalKills++;
-                // 每消除5个普通砖块，生成一个新双倍砖块
-                if (this.normalKills % 5 === 0) {
-                  this.spawnDoubleBrick();
-                }
-              }
-              // 反弹
-              const overlapX = (this.ball.x < bx + bw/2) ? (this.ball.x + this.ball.radius - bx) : (bx + bw - this.ball.x + this.ball.radius);
-              const overlapY = (this.ball.y < by + bh/2) ? (this.ball.y + this.ball.radius - by) : (by + bh - this.ball.y + this.ball.radius);
-              if (overlapX < overlapY) this.ball.dx = -this.ball.dx;
-              else this.ball.dy = -this.ball.dy;
-              break;
-            }
-          }
-          // 检查胜利
-          if (this.bricks.every(b => !b.alive)) {
-            gameOver(this.score, true);
-            return false;
-          }
-          return true;
-        },
-        draw() {
-          ctx.clearRect(0,0,SIZE,SIZE);
-          // 砖块
-          for (let brick of this.bricks) {
-            if (!brick.alive) continue;
-            ctx.fillStyle = brick.color;
-            ctx.shadowColor = brick.color;
-            ctx.shadowBlur = brick.isDouble ? 20 : 8;
-            ctx.fillRect(brick.x, brick.y, brick.w, brick.h);
-            if (brick.isDouble) {
-              ctx.fillStyle = '#fff';
-              ctx.font = '12px Inter';
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'middle';
-              ctx.fillText('×2', brick.x + brick.w/2, brick.y + brick.h/2);
-            }
-          }
-          ctx.shadowBlur = 0;
-          ctx.fillStyle = '#00d4ff'; ctx.shadowColor = '#00d4ff'; ctx.shadowBlur = 15;
-          ctx.fillRect(this.paddle.x, this.paddle.y, this.paddle.width, this.paddle.height);
-          ctx.shadowBlur = 0;
-          ctx.beginPath(); ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI*2);
-          ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 20; ctx.fill();
-          ctx.shadowBlur = 0;
-          ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.font = '14px Inter';
-          ctx.fillText('❤️'.repeat(this.lives), 10, 20);
-        },
-        movePaddle(dx) {
-          this.paddle.x += dx;
-          if (this.paddle.x < 0) this.paddle.x = 0;
-          if (this.paddle.x + this.paddle.width > SIZE) this.paddle.x = SIZE - this.paddle.width;
-        }
-      };
-
-      // ----- 游戏控制 -----
-      let gameOverFlag = false;
-      function gameOver(score, win = false) {
-        stopGame(); gameOverFlag = true;
-        showOverlay(score, win);
-      }
-      function restartGame() {
-        hideOverlay(); gameOverFlag = false;
-        switch (currentGame) {
-          case 'snake': snake.init(); startGameLoop(() => { if (!snake.update()) return; snake.draw(); }, 150); break;
-          case 'tetris': tetris.init(); startGameLoop(() => { tetris.update(); tetris.draw(); }, tetris.dropInterval); break;
-          case 'breakout': breakout.init(); startGameLoop(() => { if (!breakout.update()) return; breakout.draw(); }, 16); break;
-        }
-      }
-      function switchGame(game) {
-        if (game === currentGame) return;
-        stopGame();
-        currentGame = game;
-        tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.game === game));
-        restartGame();
-      }
-
-      // 键盘控制
-      document.addEventListener('keydown', (e) => {
-        if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
-        if (!gameRunning) return;
-        switch (currentGame) {
-          case 'snake':
-            switch (e.key) {
-              case 'ArrowUp': if (snake.direction !== 'down') snake.nextDirection = 'up'; break;
-              case 'ArrowDown': if (snake.direction !== 'up') snake.nextDirection = 'down'; break;
-              case 'ArrowLeft': if (snake.direction !== 'right') snake.nextDirection = 'left'; break;
-              case 'ArrowRight': if (snake.direction !== 'left') snake.nextDirection = 'right'; break;
-            } break;
-          case 'tetris':
-            switch (e.key) {
-              case 'ArrowLeft': if (!tetris.collide(tetris.piece, tetris.board, -1, 0)) tetris.piece.x--; break;
-              case 'ArrowRight': if (!tetris.collide(tetris.piece, tetris.board, 1, 0)) tetris.piece.x++; break;
-              case 'ArrowDown': tetris.update(); break;
-              case 'ArrowUp': tetris.rotate(); break;
-            } break;
-          case 'breakout':
-            switch (e.key) {
-              case 'ArrowLeft': breakout.movePaddle(-20); break;
-              case 'ArrowRight': breakout.movePaddle(20); break;
-            } break;
-        }
-      });
-
-      // 鼠标控制打砖块（电脑端）
-      canvas.addEventListener('mousemove', (e) => {
-        if (currentGame !== 'breakout' || !gameRunning) return;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const mouseX = (e.clientX - rect.left) * scaleX;
-        breakout.paddle.x = mouseX - breakout.paddle.width/2;
-        if (breakout.paddle.x < 0) breakout.paddle.x = 0;
-        if (breakout.paddle.x + breakout.paddle.width > SIZE) breakout.paddle.x = SIZE - breakout.paddle.width;
-      });
-
-      // 标签切换
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => switchGame(tab.dataset.game));
-      });
-      restartBtn.addEventListener('click', restartGame);
-
-      // 初始化默认游戏
-      snake.init();
-      startGameLoop(() => { if (!snake.update()) return; snake.draw(); }, 150);
-      gameRunning = true;
     })();
   </script>
 </body>
